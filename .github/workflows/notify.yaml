@@ -1,13 +1,31 @@
 name: notify
-run-name: ${{ github.workflow }} (${{ github.ref_name }}) [${{ github.event_name }}.${{ github.event.action }}]
-on: [pull_request, pull_request_target, pull_request_review, pull_request_review_comment, workflow_dispatch]
+run-name: ${{ github.workflow }} (${{ (github.head_ref && github.head_ref) || (github.ref_name && github.ref_name)) }}) [${{ github.event_name }}.${{ github.event.action }}]
+on:
+  pull_request:
+    types: 
+      - opened
+      - edited
+      - closed
+      - reopened
+      - synchronize
+  pull_request_target:
+      types: 
+      - opened
+      - edited
+      - closed
+      - reopened
+      - synchronize
+  pull_request_review:
+  pull_request_review_comment:
+  workflow_dispatch:
+  
 jobs:
-  post-request:
+  post_request:
     runs-on: ubuntu-latest
     steps:
-      - name: pull_request
+      - name: when pull_request
         if: github.event_name == 'pull_request'
-        run: echo pull_request
+        run: echo "description=新規記事の投稿がリクエストされました" >> $GITHUB_ENV
 
 
 
