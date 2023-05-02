@@ -1,5 +1,5 @@
 name: notify
-run-name: (${{ github.ref_name }}) ${{ github.workflow }}
+run-name: ${{ github.workflow }} (${{ github.ref_name }})
 on: [pull_request, pull_request_target, pull_request_review, pull_request_review_comment, workflow_dispatch]
 jobs:
   post-request:
