@@ -6,7 +6,7 @@ jobs:
     steps:
       - name: convert event object to plain text
         id: convert
-        run: echo ""::set-output name=plaintext::$(echo '{{ toJson(github.event) ))' | jq -r toString}"
+        run: echo ""::set-output name=plaintext::$(echo '{{ toJson(github.event) }}' | jq -r toString}"
       - name: POST request
         run: |
            curl -X POST -H 'Content-Type: application/json' -d '{"type": "message","attachments": [{"contentType": "application/vnd.microsoft.card.adaptive","contentUrl": null,"content": {"type": "AdaptiveCard","body": [{"type": "TextBlock","text": "${{ steps.convert.outputs.event }}" \n予約投稿テスト","wrap": true}],"$schema": "http://adaptivecards.io/schemas/adaptive-card.json","version": "1.5"}}]}' ${{ secrets.URL}}
