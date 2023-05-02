@@ -1,5 +1,7 @@
 name: notify
-run-name: ${{ github.workflow }} (${{ (github.head_ref && github.head_ref) || (github.ref_name && github.ref_name) }}) [${{ github.event_name }}.${{ github.event.action }}]
+env:
+  BRANCH_NAME: ${{ (github.head_ref && github.head_ref) || (github.ref_name && github.ref_name) }}
+run-name: ${{ github.workflow }} (${{ BRANCH_NAME }}) [${{ github.event_name }}.${{ github.event.action }}]
 on:
   pull_request:
     types: 
