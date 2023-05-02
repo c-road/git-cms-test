@@ -5,4 +5,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-           curl -X POST -H 'Content-Type: application/json' -d '{"type": "AdaptiveCard","body": [{"type": "TextBlock","text": "${description}","wrap": true}],"$schema": "http://adaptivecards.io/schemas/adaptive-card.json","version": "1.5"}' ${URL}
+           curl -X POST -H 'Content-Type: application/json' -d '{"type": "AdaptiveCard","body": [{"type": "TextBlock","text": "${description}","wrap": true}],"$schema": "http://adaptivecards.io/schemas/adaptive-card.json","version": "1.5"}' ${{URL}}
