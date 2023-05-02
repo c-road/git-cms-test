@@ -6,4 +6,4 @@ jobs:
     steps:
       - name: convert event object to plain text
         id: convert
-        run: echo plaintext="${{ toJson(github.event) }}" | jq -r toString
+        run: echo plaintext="${{ toJson(github.event) }} | jq -r toString"
