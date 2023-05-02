@@ -6,7 +6,7 @@ jobs:
     steps:
       - name: convert event object to plain text
         id: convert
-        run: echo "{plaintext}={echo "${{ toJson(github.event) }}" | jq -r toString}" >> $GITHUB_STATE
+        run: echo "{plaintext}={echo ${{ toJson(github.event) }} | jq -r toString}" >> $GITHUB_STATE
         # run: echo '::set-output name=plaintext::$(echo "{{ toJson(github.event) }}" | jq -r toString}'
       - name: POST request
         run: |
