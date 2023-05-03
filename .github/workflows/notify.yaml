@@ -36,17 +36,17 @@ jobs:
       - id: edited-or-synchronize
         # pull requestが編集されたとき
         if: ${{ github.event.action == 'edited' || github.event.action == 'synchronize'}}
-        run: echo "message_title="リクエストの編集" >> $GITHUB_ENV
+        run: echo "message_title=リクエストの編集" >> $GITHUB_ENV
 
       - id: merged
         # pull requestがcloseされ，かつmargeされたとき
         if: ${{ github.event.action == 'closed' || github.event.pull_request.merged }}
-        run: echo "message_title="リクエストの承認・反映" >> $GITHUB_ENV
+        run: echo "message_title=リクエストの承認・反映" >> $GITHUB_ENV
 
       - id: closed
         # pull requestがcloseされ，かつmargeされなかったとき
         if: ${{ github.event.action == 'closed' || github.event.pull_request.merged }}
-        run: echo "message_title="リクエストの却下" >> $GITHUB_ENV
+        run: echo "message_title=リクエストの却下" >> $GITHUB_ENV
 
       - id: message_title
         run: echo "pull_request_message_title=${{ env.message_title }}" >> $GITHUB_OUTPUT
