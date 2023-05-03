@@ -56,7 +56,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: pull_request
     steps:
-      - run: echo ${{ needs.pull_request.outputs.message_title }}
+      - run: echo ${{ needs.pull_request.outputs.pull_request_message_title }}
 
   #  if: ${{ github.event.action == 'opened' }}
 
