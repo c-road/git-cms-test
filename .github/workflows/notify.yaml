@@ -26,13 +26,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: pull_request and not an article edit
-        if: ${{ (github.event_name == 'pull_request') && contains(${{ env.BRANCH_NAME }}, 'system/') }}
+        if: ((github.event_name == 'pull_request') && contains(${{ env.BRANCH_NAME }}, 'system/'))
         run: echo "description=ウェブサイトのシステムの更新がリクエストされました" >> $GITHUB_ENV
       - name: pull_request and an article edit
-        if: ${{ (github.event_name == 'pull_request') && contains(${{ env.BRANCH_NAME }}, 'article/') }}
+        if: ((github.event_name == 'pull_request') && contains(${{ env.BRANCH_NAME }}, 'article/'))
         run: echo "description=新規記事の投稿がリクエストされました" >> $GITHUB_ENV
       - name: pull_request and other
-        if: ${{ (github.event_name == 'pull_request') && ( ${{ env.description }} ) }}
+        if: ((github.event_name == 'pull_request') && ( ${{ env.description }} ))
         run: echo "description=更新がリクエストされました" >> $GITHUB_ENV
 
 #      - name: convert event object to plain text
