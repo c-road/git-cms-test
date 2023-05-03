@@ -102,10 +102,13 @@ jobs:
   get_message_title:
     # if: ${{ needs.pull_request.outputs.message_title }}
     runs-on: ubuntu-latest
-    needs: pull_request
+    needs:
+      - pull_request
+      - pull_request_review
+      - pull_request_review_comment
     steps:
-      - run: echo ${{ needs.pull_request.outputs.pull_request_message_title }}
-
+      - run: echo ${{ (needs.pull_request.outputs.pull_request_message_title && needs.pull_request.outputs.pull_request_message_title) || (needs.pull_request_review.outputs.pull_request_review_message_title && needs.pull_request_review.outputs.pull_request_review_message_title ) || (needs.pull_request_review_comment.outputs.pull_request_review_comment_message_title && needs.pull_request_review_comment.outputs.pull_request_review_comment_message_title) }}
+  #               ${{ (github.head_ref && github.head_ref) || (github.ref_name && github.ref_name) }}
   #  if: ${{ github.event.action == 'opened' }}
 
   #   steps:
