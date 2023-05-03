@@ -35,7 +35,7 @@ jobs:
 
       - id: edited-or-synchronize
         # pull requestが編集されたとき
-        if: ${{ github.event.action == 'edited' || github.event.name == 'synchronize'}}
+        if: ${{ github.event.action == 'edited' || github.event.action == 'synchronize'}}
         run: echo "message_title="リクエストの編集" >> $GITHUB_ENV
 
       - id: merged
