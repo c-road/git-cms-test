@@ -33,6 +33,7 @@ jobs:
         run: echo "description=新規記事の投稿がリクエストされました" >> $GITHUB_ENV
       - name: pull_request and other
         if: (github.event_name == 'pull_request') && ( ${{ env.description }} )
+        run: echo "description=更新がリクエストされました" >> $GITHUB_ENV
 
 #      - name: convert event object to plain text
 #        id: convert
