@@ -22,10 +22,10 @@ on:
   workflow_dispatch:
   
 jobs:
-  post_request:
+  pull_request:
     runs-on: ubuntu-latest
     steps:
-      - name: pull_request and not an article edit
+      - name: pull_request and system improvements
         if: ${{ github.event_name == 'pull_request' && contains( env.BRANCH_NAME , 'system/') }}
         run: echo "description=ウェブサイトのシステムの更新がリクエストされました" >> $GITHUB_ENV
       - name: pull_request and an article edit
@@ -37,6 +37,20 @@ jobs:
       - name: return description
         run: echo ${{ env.description }}
 
-#      - name: convert event object to plain text
-#        id: convert
-#        run: echo plaintext="${{ toJson(github.event) }} | jq -r toString"
+  pull_request_target:
+    if: ${{ !env.description }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: pull_request and system improvements
+        if: ${{ github.event_name == 'pull_request_target' && contains( env.BRANCH_NAME , 'system/') }}
+        run: echo "description=ウェブサイトのシステムの更新がリクエストされました" >> $GITHUB_ENV
+      - name: pull_request and an article edit
+        if: ${{ github.event_name == 'pull_request_target' && contains( env.BRANCH_NAME , 'article/') }}
+        run: echo "description=新規記事の投稿がリクエストされました" >> $GITHUB_ENV
+      - name: pull_request and other
+        if: ${{ github.event_name == 'pull_request_target' && !env.description }}
+        run: echo "description=更新がリクエストされました" >> $GITHUB_ENV
+      - name: return description
+        run: echo ${{ env.description }}
+        
+        
