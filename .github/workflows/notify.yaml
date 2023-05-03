@@ -102,6 +102,7 @@ jobs:
   get_message_title:
     # if: ${{ needs.pull_request.outputs.message_title }}
     runs-on: ubuntu-latest
+    if: ${{ always() }}
     needs:
       - pull_request
       - pull_request_review
