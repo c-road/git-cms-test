@@ -40,12 +40,12 @@ jobs:
 
       - id: merged
         # pull requestがcloseされ，かつmargeされたとき
-        if: ${{ github.event.action == 'closed' || pull_request.merged == 'true' }}
+        if: ${{ github.event.action == 'closed' || pull_request.merged }}
         run: echo "message_title="リクエストの承認・反映" >> $GITHUB_ENV
 
       - id: closed
         # pull requestがcloseされ，かつmargeされなかったとき
-        if: ${{ github.event.action == 'closed' || pull_request.merged == 'false' }}
+        if: ${{ github.event.action == 'closed' || pull_request.merged }}
         run: echo "message_title="リクエストの却下" >> $GITHUB_ENV
 
       - id: message_title
