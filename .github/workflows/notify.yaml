@@ -50,7 +50,7 @@ jobs:
         run: echo "description=更新がリクエストされました" >> $GITHUB_ENV
       - id: description
         name: return description
-        run: echo ${{ env.description }}
+        run: echo "description=${{ env.description }}" >> $GITHUB_OUTPUT
         
   return_description:
     # if: ${{ needs.pull_request.outputs.description }}
