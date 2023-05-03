@@ -22,6 +22,7 @@ on:
   workflow_dispatch:
 
 jobs:
+  # pull requestの追加・編集・承認・却下
   pull_request:
     runs-on: ubuntu-latest
     outputs:
@@ -51,7 +52,54 @@ jobs:
       - id: message_title
         run: echo "pull_request_message_title=${{ env.message_title }}" >> $GITHUB_OUTPUT
 
-  return_message_title:
+  # pull requestのレビュー
+  pull_request_review:
+    runs-on: ubuntu-latest
+    outputs:
+      pull_request_message_title: ${{ steps.message_title.outputs.pull_request_review_message_title }}
+    if: ${{ github.event_name == 'pull_request_review' }}
+    steps:
+      - id: dismissed
+        # レビューで無視されたとき
+        if: ${{ github.event.action == 'dismissed' }}
+        run: echo "message_title=レビューの却下" >> $GITHUB_ENV
+
+      - id: edited
+        if: ${{ github.event.action == 'edited' }}
+        run: echo "message_title=レビューの編集" >> $GITHUB_ENV
+
+      - id: submitted
+        if: ${{ github.event.action == 'submitted' }}
+        run: echo "message_title=レビューの送信" >> $GITHUB_ENV
+
+      - id: message_title
+        run: echo "pull_request_review_message_title=${{ env.message_title }}" >> $GITHUB_OUTPUT
+
+  # pull request のコメント
+  pull_request_review_comment:
+    runs-on: ubuntu-latest
+    outputs:
+      pull_request_message_title: ${{ steps.message_title.outputs.pull_request_review_comment_message_title }}
+    if: ${{ github.event_name == 'pull_request_review_comment' }}
+    steps:
+      - id: dismissed
+        # レビューで無視されたとき
+        if: ${{ github.event.action == 'created' }}
+        run: echo "message_title=レビューコメントの投稿" >> $GITHUB_ENV
+
+      - id: edited
+        if: ${{ github.event.action == 'edited' }}
+        run: echo "message_title=レビューコメントの編集" >> $GITHUB_ENV
+
+      - id: submitted
+        if: ${{ github.event.action == 'deleted' }}
+        run: echo "message_title=レビューコメントの削除" >> $GITHUB_ENV
+
+      - id: message_title
+        run: echo "pull_request_review_comment_message_title=${{ env.message_title }}" >> $GITHUB_OUTPUT
+
+  # タイトルの取得
+  get_message_title:
     # if: ${{ needs.pull_request.outputs.message_title }}
     runs-on: ubuntu-latest
     needs: pull_request
