@@ -36,8 +36,7 @@ jobs:
       - name: pull_request and other
         if: ${{ github.event_name == 'pull_request' && !env.description }}
         run: echo "description=更新がリクエストされました" >> $GITHUB_ENV
-      - id: description
-        name: return description
+      - name: return description
         run: echo "{description}=${{ env.description }}" >> $GITHUB_OUTPUT
 
       - name: pull_request and system improvements
@@ -49,7 +48,8 @@ jobs:
       - name: pull_request and other
         if: ${{ github.event_name == 'pull_request_target' && !env.description }}
         run: echo "description=更新がリクエストされました" >> $GITHUB_ENV
-      - name: return description
+      - id: description
+        name: return description
         run: echo ${{ env.description }}
         
   return_description:
