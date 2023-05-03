@@ -26,10 +26,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: When it is a pull_request and not an article edit
-        if: (github.event_name == 'pull_request') && contains(${{ BRANCH_NAME }}, 'system/')
+        if: (github.event_name == 'pull_request') && contains(${{ env.BRANCH_NAME }}, 'system/')
         run: echo "description=ウェブサイトのシステムの更新がリクエストされました" >> $GITHUB_ENV
       - name: When it is a pull_request and an article edit
-        if: (github.event_name == 'pull_request') && contains(${{ BRANCH_NAME }}, 'system/')
+        if: (github.event_name == 'pull_request') && contains(${{ env.BRANCH_NAME }}, 'system/')
         run: echo "description=新規記事の投稿がリクエストされました" >> $GITHUB_ENV
 
 
