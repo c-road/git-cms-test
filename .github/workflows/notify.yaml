@@ -25,7 +25,7 @@ jobs:
   pull_request:
     runs-on: ubuntu-latest
     outputs:
-      description: ${{ steps.step1.description.description }}
+      description: ${{ steps.description.description }}
     steps:
       - name: pull_request and system improvements
         if: ${{ github.event_name == 'pull_request' && contains( env.BRANCH_NAME , 'system/') }}
