@@ -34,6 +34,10 @@ jobs:
         if: ${{ github.event.action == 'opened' }}
         run: echo "message_title=リクエストの追加" >> $GITHUB_ENV
 
+      - name: Assign author to PR
+        if: ${{ github.event.action == 'opened' }}
+        uses: technote-space/assign-author@v1
+
       - id: edited-or-synchronize
         # pull requestが編集されたとき
         if: ${{ github.event.action == 'edited' || github.event.action == 'synchronize'}}
