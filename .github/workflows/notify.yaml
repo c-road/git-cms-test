@@ -60,7 +60,7 @@ jobs:
   pull_request_review:
     runs-on: ubuntu-latest
     outputs:
-      pull_request_message_title: ${{ steps.message_title.outputs.pull_request_review_message_title }}
+      pull_request_review_message_title: ${{ steps.message_title.outputs.pull_request_review_message_title }}
     if: ${{ github.event_name == 'pull_request_review' }}
     steps:
       - id: dismissed
@@ -83,7 +83,7 @@ jobs:
   pull_request_review_comment:
     runs-on: ubuntu-latest
     outputs:
-      pull_request_message_title: ${{ steps.message_title.outputs.pull_request_review_comment_message_title }}
+      pull_request_review_comment_message_title: ${{ steps.message_title.outputs.pull_request_review_comment_message_title }}
     if: ${{ github.event_name == 'pull_request_review_comment' }}
     steps:
       - id: dismissed
