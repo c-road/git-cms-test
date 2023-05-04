@@ -113,8 +113,8 @@ jobs:
       - pull_request_review_comment
     steps:
       - run: |
-          echo m-title=${{ (needs.pull_request.outputs.pull_request_message_title && needs.pull_request.outputs.pull_request_message_title) || (needs.pull_request_review.outputs.pull_request_review_message_title && needs.pull_request_review.outputs.pull_request_review_message_title ) || (needs.pull_request_review_comment.outputs.pull_request_review_comment_message_title && needs.pull_request_review_comment.outputs.pull_request_review_comment_message_title) }}
-          curl -X POST -H 'Content-Type: application/json' -d "{\"type\": \"message\",\"attachments\": [{\"contentType\": \"application/vnd.microsoft.card.adaptive\",\"contentUrl\": null,\"content\": {\"type\":\"AdaptiveCard\",\"body\": [{\"type\": \"TextBlock\",\"text\": \"${m-title}\",\"wrap\": true}],\"$schema\": \"http://adaptivecards.io/schemas/adaptive-card.json\",\"version\": \"1.5\"}}]}"  ${{ secrets.URL}}
+          echo M_TITLE=${{ (needs.pull_request.outputs.pull_request_message_title && needs.pull_request.outputs.pull_request_message_title) || (needs.pull_request_review.outputs.pull_request_review_message_title && needs.pull_request_review.outputs.pull_request_review_message_title ) || (needs.pull_request_review_comment.outputs.pull_request_review_comment_message_title && needs.pull_request_review_comment.outputs.pull_request_review_comment_message_title) }}
+          curl -X POST -H 'Content-Type: application/json' -d "{\"type\": \"message\",\"attachments\": [{\"contentType\": \"application/vnd.microsoft.card.adaptive\",\"contentUrl\": null,\"content\": {\"type\":\"AdaptiveCard\",\"body\": [{\"type\": \"TextBlock\",\"text\": \"${M_TITLE}\",\"wrap\": true}],\"$schema\": \"http://adaptivecards.io/schemas/adaptive-card.json\",\"version\": \"1.5\"}}]}"  ${{ secrets.URL}}
   #               ${{ (github.head_ref && github.head_ref) || (github.ref_name && github.ref_name) }}
   #  if: ${{ github.event.action == 'opened' }}
 
