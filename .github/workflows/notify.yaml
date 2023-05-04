@@ -24,6 +24,7 @@ on:
 jobs:
   # pull requestの追加・編集・承認・却下
   pull_request:
+    name: PR
     runs-on: ubuntu-latest
     outputs:
       pull_request_message_title: ${{ steps.message_title.outputs.pull_request_message_title }}
@@ -58,6 +59,7 @@ jobs:
 
   # pull requestのレビュー
   pull_request_review:
+    name: PRレビュー
     runs-on: ubuntu-latest
     outputs:
       pull_request_review_message_title: ${{ steps.message_title.outputs.pull_request_review_message_title }}
@@ -81,6 +83,7 @@ jobs:
 
   # pull request のコメント
   pull_request_review_comment:
+    name: PRレビューコメント
     runs-on: ubuntu-latest
     outputs:
       pull_request_review_comment_message_title: ${{ steps.message_title.outputs.pull_request_review_comment_message_title }}
@@ -104,6 +107,7 @@ jobs:
 
   # タイトルの取得
   get_message_title:
+    name: メッセージの送信
     # if: ${{ needs.pull_request.outputs.message_title }}
     runs-on: ubuntu-latest
     if: ${{ always() }}
