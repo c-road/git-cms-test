@@ -32,7 +32,10 @@ jobs:
       - id: user_name
         run: |
            echo "user_name=${{ github.event.sender.login }}" >> $GITHUB_OUTPUT
-           echo "${{ toJSON(github) }}"
+      - run: echo "${{ toJSON(github) }}" > json.txt
+      - uses: actions/upload-artifact@v3
+        with:
+          path: json.txt
   
   # pull requestの追加・編集・承認・却下
   pull_request:
