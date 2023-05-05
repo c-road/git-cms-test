@@ -54,7 +54,7 @@ jobs:
         name: PRの編集
         # pull requestが編集されたとき
         if: ${{ github.event.action == 'edited' || github.event.action == 'synchronize'}}
-        run: echo "message_title=リクエストの内容の編集" >> $GITHUB_ENV
+        run: echo "message_title=リクエストの内容の修正" >> $GITHUB_ENV
 
       - id: merged
         name: PRのマージ
