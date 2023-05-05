@@ -30,7 +30,7 @@ jobs:
       user: ${{ steps.user_name.outputs.user_name }}
     steps:
       - id: user_name
-        run: echo "user-name=${{ girhub.event.sender }}" >> $GITHUB_OUTPUT
+        run: echo "user-name=${{ github.event.sender }}" >> $GITHUB_OUTPUT
   
   # pull requestの追加・編集・承認・却下
   pull_request:
