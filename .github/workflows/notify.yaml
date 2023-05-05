@@ -143,7 +143,7 @@ jobs:
       - name: メッセージ送信
         run: |
           M_TITLE="${{ (needs.pull_request.outputs.pull_request_message_title && needs.pull_request.outputs.pull_request_message_title) || (needs.pull_request_review.outputs.pull_request_review_message_title && needs.pull_request_review.outputs.pull_request_review_message_title ) || (needs.pull_request_review_comment.outputs.pull_request_review_comment_message_title && needs.pull_request_review_comment.outputs.pull_request_review_comment_message_title) }}"
-          USER_NAME=needs.ready.outputs.user_name
+          USER_NAME${{ =needs.ready.outputs.user_name }}
           echo $USER_NAME
           echo "$M_TITLE"
           curl -X POST -H "Content-Type: application/json" -d "{\"type\": \"message\",\"attachments\": [{\"contentType\": \"application/vnd.microsoft.card.adaptive\",\"contentUrl\": null,\"content\": {\"type\":\"AdaptiveCard\",\"body\": [{\"type\": \"TextBlock\",\"size\":\"ExtraLarge\",\"weight\":\"Bolder\",\"text\": \" $M_TITLE \",\"wrap\": true},{\"type\": \"TextBlock\",\"text\": \" $M_TITLE \",\"wrap\": true}, {\"type\":\"FactSet\",\"facts\":[{\"title\":\"リクエスト番号\",\"value\":\"5\"},{\"title\":\"ユーザー\",\"value\":\" $USER_NAME \"},{\"title\":\"見出し\",\"value\":\"中身\"},{\"title\":\"Fact 4\",\"value\":\"Value 5\"}]}],\"$schema\": \"http://adaptivecards.io/schemas/adaptive-card.json\",\"version\": \"1.5\"}}]}"  ${{ secrets.URL}}
