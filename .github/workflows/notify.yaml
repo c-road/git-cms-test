@@ -32,7 +32,7 @@ jobs:
       - id: user_name
         run: |
            echo "user_name=${{ github.event.sender.login }}" >> $GITHUB_OUTPUT
-           echo "${{ toKSON(github) }}"
+           echo "${{ toJSON(github) }}"
   
   # pull requestの追加・編集・承認・却下
   pull_request:
