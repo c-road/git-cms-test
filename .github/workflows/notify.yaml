@@ -27,7 +27,7 @@ jobs:
     name: 準備
     runs-on: ubuntu-latest
     outputs:
-      user: ${{ steps.user_name.outputs.user_name }}
+      user_name: ${{ steps.user_name.outputs.user_name }}
     steps:
       - id: user_name
         run: echo "user_name=${{ github.event.sender.login }}" >> $GITHUB_OUTPUT
