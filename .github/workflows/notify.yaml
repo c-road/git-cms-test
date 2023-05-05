@@ -31,8 +31,8 @@ jobs:
     steps:
       - id: user_name
         run: |
-             | echo "user_name=${{ github.event.sender.login }}" >> $GITHUB_OUTPUT
-             | exho "${{ github }}"
+           echo "user_name=${{ github.event.sender.login }}" >> $GITHUB_OUTPUT
+           echo "${{ toKSON(github) }}"
   
   # pull requestの追加・編集・承認・却下
   pull_request:
