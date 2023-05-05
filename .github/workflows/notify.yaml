@@ -32,6 +32,7 @@ jobs:
     steps:
       - id: opened
         # pull requestが作成されたとき
+        name: PRの追加
         if: ${{ github.event.action == 'opened' }}
         run: echo "message_title=リクエストの追加" >> $GITHUB_ENV
 
@@ -40,21 +41,25 @@ jobs:
         uses: technote-space/assign-author@v1
 
       - id: edited-or-synchronize
+        name: PRの編集
         # pull requestが編集されたとき
         if: ${{ github.event.action == 'edited' || github.event.action == 'synchronize'}}
         run: echo "message_title=リクエストの内容の編集" >> $GITHUB_ENV
 
       - id: merged
+        name: PRのマージ
         # pull requestがcloseされ，かつmargeされたとき
         if: ${{ github.event.action == 'closed' || github.event.pull_request.merged }}
         run: echo "message_title=リクエストの承認・反映" >> $GITHUB_ENV
 
       - id: closed
+        name: PRの却下
         # pull requestがcloseされ，かつmargeされなかったとき
         if: ${{ github.event.action == 'closed' || github.event.pull_request.merged }}
         run: echo "message_title=リクエストの却下" >> $GITHUB_ENV
 
       - id: message_title
+        name: PRのメッセージ
         run: echo "pull_request_message_title=${{ env.message_title }}" >> $GITHUB_OUTPUT
 
   # pull requestのレビュー
@@ -67,18 +72,22 @@ jobs:
     steps:
       - id: dismissed
         # レビューで無視されたとき
+        name: レビューの却下
         if: ${{ github.event.action == 'dismissed' }}
         run: echo "message_title=レビューの却下" >> $GITHUB_ENV
 
       - id: edited
+        name: レビューの編集
         if: ${{ github.event.action == 'edited' }}
         run: echo "message_title=レビューの編集" >> $GITHUB_ENV
 
       - id: submitted
+        name: レビューの送信
         if: ${{ github.event.action == 'submitted' }}
         run: echo "message_title=レビューの送信" >> $GITHUB_ENV
 
       - id: message_title
+        name: レビューのメッセージ
         run: echo "pull_request_review_message_title=${{ env.message_title }}" >> $GITHUB_OUTPUT
 
   # pull request のコメント
@@ -89,16 +98,19 @@ jobs:
       pull_request_review_comment_message_title: ${{ steps.message_title.outputs.pull_request_review_comment_message_title }}
     if: ${{ github.event_name == 'pull_request_review_comment' }}
     steps:
-      - id: dismissed
-        # レビューで無視されたとき
+      - id: created
+        # レビューコメントの投稿
+        name: レビューコメントの投稿
         if: ${{ github.event.action == 'created' }}
         run: echo "message_title=レビューコメントの投稿" >> $GITHUB_ENV
 
       - id: edited
+        name: レビューコメントの編集
         if: ${{ github.event.action == 'edited' }}
         run: echo "message_title=レビューコメントの編集" >> $GITHUB_ENV
 
-      - id: submitted
+      - id: deleted
+        name: レビューコメントの削除
         if: ${{ github.event.action == 'deleted' }}
         run: echo "message_title=レビューコメントの削除" >> $GITHUB_ENV
 
