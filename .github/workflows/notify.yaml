@@ -1,0 +1,169 @@
+name: notify
+env:
+  BRANCH_NAME: ${{ (github.head_ref && github.head_ref) || (github.ref_name && github.ref_name) }}
+run-name: ${{ github.workflow }} (${{ (github.head_ref && github.head_ref) || (github.ref_name && github.ref_name)  }}) [${{ github.event_name }}.${{ github.event.action }}]
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - closed
+      - reopened
+      - synchronize
+  # pull_request_target:
+  #    types:
+  #    - opened
+  #    - edited
+  #    - closed
+  #    - reopened
+  #    - synchronize
+  pull_request_review:
+  pull_request_review_comment:
+  workflow_dispatch:
+
+jobs:
+  # 準備
+  ready:
+    name: 準備
+    runs-on: ubuntu-latest
+    outputs:
+      user_name: ${{ steps.user_name.outputs.user_name }}
+    steps:
+      - id: user_name
+        run: |
+          echo "user_name=${{ github.event.sender.login }}" >> $GITHUB_OUTPUT
+      #- run: echo "${{ toJSON(github) }}" > json.txt
+      #- uses: actions/upload-artifact@v3
+      #  with:
+      #    path: json.txt
+
+  # pull requestの追加・編集・承認・却下
+  pull_request:
+    name: PR
+    runs-on: ubuntu-latest
+    outputs:
+      pull_request_message_title: ${{ steps.message_title.outputs.pull_request_message_title }}
+    if: ${{ github.event_name == 'pull_request' }}
+    steps:
+      - id: opened
+        # pull requestが作成されたとき
+        name: PRの追加
+        if: ${{ github.event.action == 'opened' }}
+        run: echo "message_title=リクエストの追加" >> $GITHUB_ENV
+
+      - name: Assign author to PR
+        if: ${{ github.event.action == 'opened' }}
+        uses: technote-space/assign-author@v1
+
+      - id: edited-or-synchronize
+        name: PRの編集
+        # pull requestが編集されたとき
+        if: ${{ github.event.action == 'edited' || github.event.action == 'synchronize'}}
+        run: echo "message_title=リクエストの内容の修正" >> $GITHUB_ENV
+
+      - id: merged
+        name: PRのマージ
+        # pull requestがcloseされ，かつmargeされたとき
+        if: ${{ github.event.action == 'closed' || github.event.pull_request.merged }}
+        run: echo "message_title=リクエストの承認・反映" >> $GITHUB_ENV
+
+      - id: closed
+        name: PRの却下
+        # pull requestがcloseされ，かつmargeされなかったとき
+        if: ${{ github.event.action == 'closed' || github.event.pull_request.merged }}
+        run: echo "message_title=リクエストの却下" >> $GITHUB_ENV
+
+      - id: message_title
+        name: PRのメッセージ
+        run: echo "pull_request_message_title=${{ env.message_title }}" >> $GITHUB_OUTPUT
+
+  # pull requestのレビュー
+  pull_request_review:
+    name: PRレビュー
+    runs-on: ubuntu-latest
+    outputs:
+      pull_request_review_message_title: ${{ steps.message_title.outputs.pull_request_review_message_title }}
+    if: ${{ github.event_name == 'pull_request_review' }}
+    steps:
+      - id: dismissed
+        # レビューで無視されたとき
+        name: レビューの却下
+        if: ${{ github.event.action == 'dismissed' }}
+        run: echo "message_title=レビューの却下" >> $GITHUB_ENV
+
+      - id: edited
+        name: レビューの編集
+        if: ${{ github.event.action == 'edited' }}
+        run: echo "message_title=レビューの編集" >> $GITHUB_ENV
+
+      - id: submitted
+        name: レビューの送信
+        if: ${{ github.event.action == 'submitted' }}
+        run: echo "message_title=レビューの送信" >> $GITHUB_ENV
+
+      - id: message_title
+        name: レビューのメッセージ
+        run: echo "pull_request_review_message_title=${{ env.message_title }}" >> $GITHUB_OUTPUT
+
+  # pull request のコメント
+  pull_request_review_comment:
+    name: PRレビューコメント
+    runs-on: ubuntu-latest
+    outputs:
+      pull_request_review_comment_message_title: ${{ steps.message_title.outputs.pull_request_review_comment_message_title }}
+    if: ${{ github.event_name == 'pull_request_review_comment' }}
+    steps:
+      - id: created
+        # レビューコメントの投稿
+        name: レビューコメントの投稿
+        if: ${{ github.event.action == 'created' }}
+        run: echo "message_title=レビューコメントの投稿" >> $GITHUB_ENV
+
+      - id: edited
+        name: レビューコメントの編集
+        if: ${{ github.event.action == 'edited' }}
+        run: echo "message_title=レビューコメントの編集" >> $GITHUB_ENV
+
+      - id: deleted
+        name: レビューコメントの削除
+        if: ${{ github.event.action == 'deleted' }}
+        run: echo "message_title=レビューコメントの削除" >> $GITHUB_ENV
+
+      - id: message_title
+        name: レビューのコメントのメッセージ
+        run: echo "pull_request_review_comment_message_title=${{ env.message_title }}" >> $GITHUB_OUTPUT
+
+  # タイトルの取得
+  get_message_title:
+    name: メッセージの送信
+    # if: ${{ needs.pull_request.outputs.message_title }}
+    runs-on: ubuntu-latest
+    if: ${{ always() }}
+    needs:
+      - ready
+      - pull_request
+      - pull_request_review
+      - pull_request_review_comment
+    steps:
+      - name: メッセージ送信
+        run: |
+          M_TITLE="${{ (needs.pull_request.outputs.pull_request_message_title && needs.pull_request.outputs.pull_request_message_title) || (needs.pull_request_review.outputs.pull_request_review_message_title && needs.pull_request_review.outputs.pull_request_review_message_title ) || (needs.pull_request_review_comment.outputs.pull_request_review_comment_message_title && needs.pull_request_review_comment.outputs.pull_request_review_comment_message_title) }}"
+          USER_NAME="${{ needs.ready.outputs.user_name }}"
+          echo $USER_NAME
+          echo "$M_TITLE"
+          curl -X POST -H "Content-Type: application/json" -d "{\"type\": \"message\",\"attachments\": [{\"contentType\": \"application/vnd.microsoft.card.adaptive\",\"contentUrl\": null,\"content\": {\"type\":\"AdaptiveCard\",\"body\": [{\"type\": \"TextBlock\",\"size\":\"ExtraLarge\",\"weight\":\"Bolder\",\"text\": \" $M_TITLE [#"${{ github.event.pull_request.number }}"](${{ github.event.pull_request.html_url }}) \",\"wrap\": true},{\"type\": \"TextBlock\",\"text\": \" \",\"wrap\": true}, {\"type\":\"FactSet\",\"facts\":[{\"title\":\"ユーザー\",\"value\":\" [$USER_NAME](https:\/\/github.com\/$USER_NAME) \"},{\"title\":\"タイトル\",\"value\":\"${{ github.event.pull_request.title}}　\"},{\"title\":\"Fact 4\",\"value\":\"Value 5\"}]}],\"$schema\": \"http://adaptivecards.io/schemas/adaptive-card.json\",\"version\": \"1.5\"}}]}"  ${{ secrets.URL}}
+  #               ${{ (github.head_ref && github.head_ref) || (github.ref_name && github.ref_name) }}
+  #  if: ${{ github.event.action == 'opened' }}
+
+  #   steps:
+  #     - name: pull_request and system improvements
+  #       if: ${{ github.event_name == 'pull_request' && contains( env.BRANCH_NAME , 'system/') }}
+  #       run: echo "message_title=システムの更新がリクエストされました" >> $GITHUB_ENV
+  #     - name: pull_request and an article edit
+  #       if: ${{ github.event_name == 'pull_request' && contains( env.BRANCH_NAME , 'article/') }}
+  #       run: echo "message_title=新規記事の投稿がリクエストされました" >> $GITHUB_ENV
+  #     - name: pull_request and other
+  #       if: ${{ github.event_name == 'pull_request' && !env.message_title }}
+  #       run: echo "message_title=更新がリクエストされました" >> $GITHUB_ENV
+  #     - name: return message_title
+  #       run: echo "{message_title}=${{ env.message_title }}" >> $GITHUB_OUTPUT
