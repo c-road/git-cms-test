@@ -64,13 +64,13 @@ jobs:
       - id: merged
         name: PRのマージ
         # pull requestがcloseされ，かつmargeされたとき
-        if: ${{ github.event.action == 'closed' || github.event.pull_request.merged }}
+        if: ${{ github.event.action == 'closed' && github.event.pull_request.merged }}
         run: echo "message_title=リクエストの承認・反映" >> $GITHUB_ENV
 
       - id: closed
         name: PRの却下
         # pull requestがcloseされ，かつmargeされなかったとき
-        if: ${{ github.event.action == 'closed' || !github.event.pull_request.merged }}
+        if: ${{ github.event.action == 'closed' && !github.event.pull_request.merged }}
         run: echo "message_title=リクエストの却下" >> $GITHUB_ENV
 
       - id: message_title
